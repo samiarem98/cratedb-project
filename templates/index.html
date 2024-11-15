@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrateBot - Ask Anything</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CrateBot</h1>
+            <p class="tagline">Your Industrial AI Assistant</p>
+        </header>
+        
+        <div class="chatbox">
+            <div id="chat-box" class="messages">
+                <!-- Messages will be displayed here -->
+            </div>
+            <input type="text" id="user-input" placeholder="Ask me anything..." class="input-field" autofocus>
+            <button onclick="sendMessage()" class="btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const inputField = document.getElementById("user-input");
+            const userMessage = inputField.value;
+            const chatBox = document.getElementById("chat-box");
+
+            if (userMessage.trim()) {
+                chatBox.innerHTML += `<div class="user-message"><p>${userMessage}</p></div>`;
+
+                fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: userMessage })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const assistantMessage = data.answer || data.error;
+                    chatBox.innerHTML += `<div class="assistant-message"><p>${assistantMessage}</p></div>`;
+                    inputField.value = '';
+                    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+                })
+                .catch(error => {
+                    chatBox.innerHTML += `<div class="assistant-message error"><p>Error: Could not get response</p></div>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

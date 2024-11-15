@@ -1,0 +1,25 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+      - "8888:8888"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CRATE_DB_URL=http://db:4200
+      - CRATEDB_HOST=cratedb
+    depends_on:
+      - cratedb
+    entrypoint: /app/entrypoint.sh  # Run the entrypoint script
+
+  cratedb:
+    image: crate
+    ports:
+      - "4200:4200"
+      - "5432:5432"
+    environment:
+      - CRATE_HEAP_SIZE=2g
+
+# docker-compose up --build
+# docker exec -it cratebot-web-1 jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root

@@ -1,0 +1,14 @@
+python-dotenv==1.0.0
+langchain
+langchain-openai
+langchain-community
+pandas
+PyPDF2==3.0.0
+pypdf
+uuid==1.30
+crate==1.0.0
+Flask==2.0.3
+Werkzeug==2.0.3
+psycopg2-binary==2.9.3
+openai==1.42.0
+jupyter==1.0.0

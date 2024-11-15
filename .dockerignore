@@ -1,0 +1,4 @@
+.env
+crateenv
+*/__pycache__
+libs/
