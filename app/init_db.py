@@ -121,37 +121,6 @@ def init_db(pages):
         logger.error(f"Error initializing the database: {e}")
         raise
 
-# Function to query the database for the most similar response
-def get_most_similar_response(query):
-    """
-    Query the CrateDB database to get the most similar response based on the query.
-    """
-    try:
-        conn = get_crate_connection()
-        cursor = conn.cursor()
-        
-        # Generate embedding for the query
-        query_embedding = OpenAIEmbeddings().embed_query(query)
-        
-        # Use knn_match to find the 4 most similar texts based on the query embedding
-        cursor.execute('''
-            SELECT text 
-            FROM embeddings 
-            WHERE knn_match(embedding, {0}, 4) 
-            ORDER BY _score DESC 
-            LIMIT 4
-        '''.format(query_embedding))
-        
-        # Retrieve the results
-        similar_texts = [row[0] for row in cursor.fetchall()]
-
-        conn.close()
-        logger.info(f"Retrieved {len(similar_texts)} most similar texts.")
-        return similar_texts
-    except Exception as e:
-        logger.error(f"Error querying for similar responses: {e}")
-        raise
-
 # Example usage:
 if __name__ == "__main__":
     try:

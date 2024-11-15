@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Databricks Certification Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user {
+            background-color: #d9f7d9;
+            align-self: flex-start;
+        }
+
+        .assistant {
+            background-color: #e0e0e0;
+            align-self: flex-end;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            background-color: white;
+            border-top: 1px solid #ddd;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .input-area button {
+            background-color: white;
+            color: #e53935;
+            border: 2px solid #e53935;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .input-area button:hover {
+            background-color: #e53935;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Databricks Certification Chatbot</div>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-area">
+            <input type="text" id="message" placeholder="Ask me something...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            
+            // Add the user's message
+            chatBox.innerHTML += ` 
+                <div class="message user">${message}</div>
+            `;
+            messageInput.value = '';
+
+            // Send the message to the Flask server
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: message })
+            });
+
+            const data = await response.json();
+            const assistantReply = data.answer || data.error;
+            
+            // Add assistant's reply
+            chatBox.innerHTML += ` 
+                <div class="message assistant">${assistantReply}</div>
+            `;
+
+            // Scroll to the bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>

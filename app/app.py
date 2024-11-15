@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify
-from .embeddings import process_pdf_and_store
+from flask import Flask, request, jsonify, render_template
 from .chatbot import get_most_similar_response
 import os
 from dotenv import load_dotenv
@@ -13,14 +12,9 @@ client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
-def home():
-    return jsonify({"status": "I'm ok"}), 200
-
-@app.route('/initialize', methods=['POST'])
-def initialize():
-    process_pdf_and_store("data/source.pdf")
-    return jsonify({"status": "Database initialized with embeddings"}), 200
+@app.route('/')
+def index():
+    return render_template('index.html')  # Render the chatbot page
 
 @app.route('/ask', methods=['POST'])
 def ask():
