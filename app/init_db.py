@@ -92,6 +92,21 @@ def create_embeddings(pages):
         logger.error(f"Error generating embeddings: {e}")
         raise
 
+# Function to load and split PDF into chunks
+def load_and_split_pdf(pdf_path):
+    """
+    Load a PDF and split it into chunks using RecursiveCharacterTextSplitter.
+    """
+    try:
+        loader = PyPDFLoader(pdf_path)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        pages = loader.load_and_split(text_splitter)
+        logger.info(f"Loaded and split PDF: {pdf_path}")
+        return pages
+    except Exception as e:
+        logger.error(f"Error loading and splitting PDF: {e}")
+        raise
+    
 # Function to initialize the database and insert data
 def init_db(pages):
     """
@@ -125,9 +140,7 @@ def init_db(pages):
 if __name__ == "__main__":
     try:
         logger.info("------------------Initialization.---------------------")
-        loader = PyPDFLoader("data/Databricks.pdf")
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-        pages = loader.load_and_split(text_splitter)
+        pages = load_and_split_pdf("data/Databricks.pdf")
         result = init_db(pages)  # Initializes DB and prints the first 5 rows of the DataFrame
         logger.info("Initialization complete.")
         logger.info(f"Sample Data: {result}")

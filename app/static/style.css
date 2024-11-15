@@ -1,104 +1,99 @@
-/* General Body Style */
+/* Base Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #1c1c1c;
-    color: #fff;
+    font-family: Arial, sans-serif;
+    background-color: #f1f1f1;
+    color: #333;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
 }
 
-/* Container Styling */
 .container {
     width: 90%;
-    max-width: 800px;
-    padding: 20px;
+    max-width: 600px;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
+}
+
+.header {
+    background-color: #2f2f2f;
+    color: white;
+    padding: 10px;
     text-align: center;
+    font-size: 18px;
+    font-weight: bold;
 }
 
-/* Header */
-header h1 {
-    font-size: 3em;
-    margin-bottom: 0.2em;
-    color: #f44336; /* Subtle Red */
-}
-
-header .tagline {
-    font-size: 1.2em;
-    color: #999;
-}
-
-/* Chatbox Styling */
-.chatbox {
-    background-color: #333;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-}
-
-.messages {
-    max-height: 400px;
+.chat-box {
+    flex: 1;
+    padding: 15px;
     overflow-y: auto;
-    margin-bottom: 10px;
-    padding: 10px;
-    text-align: left;
-    background-color: #444;
-    border-radius: 8px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
 }
 
-.user-message, .assistant-message {
+.message {
     margin: 10px 0;
-    padding: 8px;
-    border-radius: 6px;
-}
-
-.user-message p {
-    margin: 0;
-    color: #f44336; /* Subtle Red */
-}
-
-.assistant-message p {
-    margin: 0;
-    color: #fff;
-}
-
-/* Error messages */
-.error p {
-    color: #f44336; /* Red for error */
-}
-
-/* Input and Button Styling */
-.input-field {
-    width: 100%;
     padding: 10px;
-    margin-top: 15px;
-    border: 2px solid #444;
-    border-radius: 8px;
-    background-color: #333;
-    color: #fff;
-    font-size: 1em;
+    border: 1px solid #ddd;
+    max-width: 80%;
+    word-wrap: break-word;
+    box-sizing: border-box;
 }
 
-.input-field:focus {
-    border-color: #f44336; /* Red border when focused */
-    outline: none;
+.user {
+    background-color: #e0e0e0;
+    align-self: flex-start;
 }
 
-.btn {
-    padding: 12px 20px;
-    background-color: #444;
-    color: #fff;
-    font-size: 1em;
-    border: none;
-    border-radius: 8px;
+.assistant {
+    background-color: #f5f5f5;
+    align-self: flex-end;
+}
+
+.input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.input-area button {
+    background-color: #4e84c4;
+    color: white;
+    border: 2px solid #4e84c4;
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
-    margin-top: 10px;
+    transition: all 0.3s;
+    box-sizing: border-box;
 }
 
-.btn:hover {
-    background-color: #f44336; /* Hover effect with red */
+.input-area button:hover {
+    background-color: #3c6a9e;
+    border-color: #3c6a9e;
 }
 
+@media (max-width: 600px) {
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+}
