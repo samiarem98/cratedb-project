@@ -1,13 +1,15 @@
 # Retrieval-Augmented Generation (RAG) Architecture - Proof of Concept (POC)
 
-This repository contains a Proof of Concept (POC) for a Retrieval-Augmented Generation (RAG) architecture. The project demonstrates how to process and store data from a PDF in a vector database (CrateDB) and use it in a chatbot application to answer user queries.
+This repository contains a Proof of Concept (POC) for a Retrieval-Augmented Generation (RAG) architecture. 
+
+The project demonstrates how to process and store data from a PDF in aa vector database (CrateDB) and use it in a chatbot application to answer user queries.
 
 ## Overview
 
 The POC consists of the following components:
 
 1. **CrateDB**:  
-   A distributed SQL database used as a vector store to store processed data.
+   An open source distributed SQL database used as a vector store to store processed data.
    
 2. **Web Service**:  
    A Flask-based chatbot application that handles user queries by retrieving relevant information from CrateDB.
@@ -32,18 +34,12 @@ The POC consists of the following components:
 
 ### Installation and Setup 
 
-1. Clone this repository (todo):
-   ```bash
-   git clone <repository-url>
-   cd <repository-folder>
-   ```
-
-2. Start the services using Docker Compose:
+1. Start the services using Docker Compose:
    ```bash
    docker-compose up --build
    ```
 
-3. Once the services are running, you can interact with them as described below.
+2. Once the services are running, you can interact with them as described below.
 
 ## Accessing the Services
 
@@ -86,7 +82,7 @@ This will show you the active containers, their names, and the ports they expose
   **Response**:
   ```json
   {
-    "answer": "Relevant answer from the PDF"
+    "answer": "Relevant text blocks from the PDF"
   }
   ```
 
@@ -152,8 +148,8 @@ docker logs <container-name>
 │   ├── app.py                 # Main Flask application file
 │   ├── chatbot.py             # Logic for the chatbot functionality
 │   ├── database.py            # Database connection and queries
-│   ├── embeddings.py          # Handles PDF embedding and vectorization
-│   ├── entrypoint.sh          # Entry point script for container initialization
+│   ├── embeddings.py          # Handles PDF embedding and vectors
+│   ├── entrypoint.sh          # Entry point initialization script 
 │   ├── init_db.py             # Initializes CrateDB with data
 │   ├── __init__.py            # Marks the folder as a Python package
 │   ├── static/

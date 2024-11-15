@@ -5,6 +5,9 @@ import uuid
 from app.database import get_crate_connection
 import re
 
+# Important !
+# Currently not used
+
 def clean_text(text):
     # Regular expression to match more than three occurrences of ". . . ." and remove them
     cleaned_text = re.sub(r'(\s*\.\s*\.\s*\.\s*\.\s*)', ' ', text)  # Replace three or more occurrences of ". . . ."

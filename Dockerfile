@@ -17,7 +17,6 @@ COPY . /app
 WORKDIR /app
 
 # Set the entrypoint script as executable
-# Copy the entrypoint.sh file
 COPY app/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
@@ -26,6 +25,3 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Run the Flask application
 CMD ["flask", "run", "--host=0.0.0.0"]
-
-# docker build -t your-app-name .
-# docker run --env-file .env -p 5000:5000 your-app-name
