@@ -6,7 +6,9 @@ from langchain_openai import OpenAIEmbeddings
 from openai import OpenAI
 from crate import client
 from psycopg2 import OperationalError
+#from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import PyPDFLoader
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 

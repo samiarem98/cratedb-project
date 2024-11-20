@@ -1,5 +1,37 @@
-from app.database import get_crate_connection
 from langchain.embeddings import OpenAIEmbeddings
+from app.database import get_crate_connection
+from openai import OpenAI  # Add this import to use the OpenAI client
+import os
+
+# Initialize the OpenAI client with your API key
+client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])  # Make sure your OpenAI API key is set in the environment variables
+
+import re
+
+def clean_response(raw_response):
+    """
+    Enhances and cleans the chatbot's response:
+    - Standardizes code blocks.
+    - Ensures consistent bold formatting for emphasis.
+    - Strips unnecessary whitespace.
+    """
+    import re
+
+    # Standardize newlines
+    cleaned = re.sub(r'\n+', '\n', raw_response.strip())
+
+    # Ensure code blocks are enclosed in proper markdown syntax
+    cleaned = re.sub(r'(?<!`)```?\s*([\s\S]*?)\s*```?', r"```\1```", cleaned)
+
+    # Normalize bold formatting (e.g., remove excessive spaces around '**')
+    cleaned = re.sub(r'\*\*\s*(.*?)\s*\*\*', r'**\1**', cleaned)
+
+    # Replace stray ` characters with proper code fencing
+    cleaned = cleaned.replace("`", "`")
+
+    return cleaned
+
+
 
 def get_most_similar_response(query):
     conn = get_crate_connection()
@@ -8,16 +40,50 @@ def get_most_similar_response(query):
     # Generate embedding for the query
     query_embedding = OpenAIEmbeddings().embed_query(query)
 
-    cursor.execute('''
+    cursor.execute(''' 
         SELECT text 
         FROM embeddings 
-        WHERE knn_match(embedding, {0}, 4) 
+        WHERE knn_match(embedding, %s, 4)  -- Use the embedding for search
         ORDER BY _score DESC 
         LIMIT 4
-    '''.format(query_embedding))
-
-    # Retrieve the results
+    ''', (query_embedding,))
+    
+    # Retrieve the most similar texts
     similar_texts = [row[0] for row in cursor.fetchall()]
-
+    
     conn.close()
-    return similar_texts
+
+    # Concatenate the found documents to use as context for the model
+    context = '---\n'.join(similar_texts)
+
+    # Construct system prompt for OpenAI's model
+    system_prompt = f"""
+    You are a Databricks expert tasked with answering user questions exclusively related to Databricks.
+    
+    Guidelines for answering:
+    1. Use only the provided context to generate an answer.
+    2. Ensure that your answer is concise, accurate, and directly addresses the user's query.
+    3. Do not speculate or provide additional details not supported by the provided context.
+    4. Provide answers in plain text, formatted clearly without unnecessary characters like excessive escape sequences.
+    5. If providing code examples, ensure they are clean and correctly formatted.
+    6. If the provided context does not contain relevant information, respond only with "I don't know."
+
+    Context:
+    {context}
+    """
+
+    # Use OpenAI to get a response with the provided context
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",  # Adjust to "gpt-4" if needed
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": query}
+            ]
+        )
+        
+        # Clean and return the assistant's response
+        raw_response = response.choices[0].message.content
+        return clean_response(raw_response)
+    except Exception as e:
+        return f"Error generating response: {e}"
