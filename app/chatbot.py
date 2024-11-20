@@ -68,7 +68,7 @@ def get_most_similar_response(query):
     2. Ensure that your answer is concise, accurate, and directly addresses the user's query.
     3. Do not speculate or provide additional details not supported by the provided context.
     4. Provide answers in plain text, formatted clearly without unnecessary characters like excessive escape sequences.
-    5. If providing code examples, ensure they are clean and correctly formatted.
+    5. in the end of the response, make sure to always add the pager number and the section of the information that you have extracted.
     6. If the provided context does not contain relevant information, respond only with "I don't know."
 
     Context:
