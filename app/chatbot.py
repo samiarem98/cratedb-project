@@ -8,28 +8,34 @@ client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])  # Make sure your OpenAI A
 
 import re
 
+import re
+
 def clean_response(raw_response):
     """
-    Enhances and cleans the chatbot's response:
-    - Standardizes code blocks.
-    - Ensures consistent bold formatting for emphasis.
-    - Strips unnecessary whitespace.
+    Cleans and formats the response for better readability.
     """
-    import re
+    # Trim excessive whitespace
+    clean_text = raw_response.strip()
 
-    # Standardize newlines
-    cleaned = re.sub(r'\n+', '\n', raw_response.strip())
+    # Format code blocks
+    clean_text = re.sub(r"```(.*?)```", r"```\1```", clean_text, flags=re.DOTALL)
 
-    # Ensure code blocks are enclosed in proper markdown syntax
-    cleaned = re.sub(r'(?<!`)```?\s*([\s\S]*?)\s*```?', r"```\1```", cleaned)
+    # Add spacing for lists (bullet or numbered)
+    clean_text = re.sub(r"(?<=\n)(\d+\.\s)", r"\n\1", clean_text)  # Numbered lists
+    clean_text = re.sub(r"(?<=\n)([-*]\s)", r"\n\1", clean_text)   # Bullet lists
 
-    # Normalize bold formatting (e.g., remove excessive spaces around '**')
-    cleaned = re.sub(r'\*\*\s*(.*?)\s*\*\*', r'**\1**', cleaned)
+    # Add line breaks around headings or emphasized sections
+    clean_text = re.sub(r"(?<=\n)(\*\*.*?\*\*)", r"\n\1\n", clean_text)
 
-    # Replace stray ` characters with proper code fencing
-    cleaned = cleaned.replace("`", "`")
+    # Remove excessive newlines
+    clean_text = re.sub(r"\n\s*\n", "\n\n", clean_text)
 
-    return cleaned
+    # Optionally, handle table formatting or blockquotes
+    clean_text = clean_text.replace("|", " | ")  # For table formatting
+    clean_text = re.sub(r"(^>\s)", r"\n\1", clean_text, flags=re.MULTILINE)  # Blockquotes
+
+    return clean_text
+
 
 
 

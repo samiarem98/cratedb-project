@@ -15,33 +15,23 @@ app = Flask(__name__)
 
 # Function to clean the response from unwanted characters
 def clean_response(response: str) -> str:
-    # Step 1: Remove unnecessary escape sequences (like \n, \\)
+
     response = re.sub(r'\\n', '\n', response)  # Replace escaped newlines with actual newlines
     response = re.sub(r'\\', '', response)    # Remove backslashes
-    
-    # Step 2: Remove extra spaces and line breaks (collapse multiple spaces into a single space)
     response = re.sub(r'\s+', ' ', response)  # Collapsing multiple spaces into one
 
-    # Step 3: Properly handle line breaks for readability
-    # Insert a newline after each sentence for better readability
+
     response = re.sub(r'([.!?])\s+(?=[A-Z])', r'\1\n\n', response)  # Split sentences into separate paragraphs
 
-    # Step 4: Preserve markdown formatting for code blocks (wrap with triple backticks)
     response = re.sub(r'```', '\n```', response)  # Ensure triple backticks are on separate lines
 
-    # Step 5: If there are bullet points or numbered lists, ensure they are formatted correctly
-    # Format bullet points with a space after the dot
+    
     response = re.sub(r'(\d+)\.\s+', r'\1. ', response)  # Ensure numbered lists are formatted correctly
     response = re.sub(r'(\*|[-+])\s+', r'\1 ', response)  # Fix bullet points formatting
 
-    # Step 6: Handle bold text (markdown style)
     response = re.sub(r'(\*\*.+?\*\*)', r'\1', response)  # Preserve bold formatting
-
-    # Step 7: Ensure proper indentation for code blocks
-    # Clean up code formatting for clarity
     response = re.sub(r'```(.*?)```', lambda m: '```' + m.group(1).strip() + '```', response, flags=re.DOTALL)
 
-    # Step 8: Strip leading/trailing spaces and ensure no unwanted leading spaces for blocks
     return response.strip()
 @app.route('/')
 def index():
