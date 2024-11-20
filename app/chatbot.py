@@ -2,13 +2,10 @@ from langchain.embeddings import OpenAIEmbeddings
 from app.database import get_crate_connection
 from openai import OpenAI  # Add this import to use the OpenAI client
 import os
+import re
 
 # Initialize the OpenAI client with your API key
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])  # Make sure your OpenAI API key is set in the environment variables
-
-import re
-
-import re
 
 def clean_response(raw_response):
     """
