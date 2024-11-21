@@ -65,11 +65,12 @@ def get_most_similar_response(query):
     
     Guidelines for answering:
     1. Use only the provided context to generate an answer.
-    2. Ensure that your answer is concise, accurate, and directly addresses the user's query.
+    2. Ensure that your answer is concise, detailed, accurate, and directly addresses the user's query.
     3. Do not speculate or provide additional details not supported by the provided context.
     4. Provide answers in plain text, formatted clearly without unnecessary characters like excessive escape sequences.
-    5. in the end of the response, make sure to always add the pager number and the section of the information that you have extracted.
+    5. At the end of your response, always include the page number and section number from which the information was extracted. Format this as: "Source: Page [Page Number], Section [Section Number]".
     6. If the provided context does not contain relevant information, respond only with "I don't know."
+    7. If the query is not about databricks, respond with "I don't know.".
 
     Context:
     {context}
