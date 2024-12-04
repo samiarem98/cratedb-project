@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solita Consulting</title>
+    <title>Databricks CertifyBot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- Add 'header' class to make sure the style is applied -->
+        <!-- Header Section -->
         <header class="header">
             <h1>Databricks CertifyBot</h1>
             <p>Instant Answers and Study Support for Databricks Certification</p>
         </header>
 
+        <!-- Chat Box Section -->
         <div class="chat-box" id="chat-box"></div>
 
+        <!-- Input Area Section -->
         <div class="input-area">
-            <input type="text" id="message" placeholder="Ask us something...">
+            <input type="text" id="message" placeholder="Ask us something..." autocomplete="off">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
@@ -29,32 +32,52 @@
             if (!message) return;
 
             const chatBox = document.getElementById('chat-box');
-            
-            // Add the user's message
+
+            // Display the user's message
             chatBox.innerHTML += `
-                <div class="message user">${message}</div>
+                <div class="message user">${escapeHtml(message)}</div>
             `;
             messageInput.value = '';
 
-            // Send the message to the Flask server
-            const response = await fetch('/ask', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ question: message })
-            });
-
-            const data = await response.json();
-            const assistantReply = data.answer || data.error;
-            
-            // Add assistant's reply
-            chatBox.innerHTML += `
-                <div class="message assistant">${assistantReply}</div>
-            `;
-
-            // Scroll to the bottom
             chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: message })
+                });
+
+                const data = await response.json();
+                const assistantReply = data.answer || data.error;
+
+                // Render the assistant's reply with Markdown processing
+                const formattedReply = marked.parse(assistantReply, { breaks: true, gfm: true });
+
+
+                // Add the assistant's reply to the chat box
+                chatBox.innerHTML += `
+                    <div class="message assistant">${formattedReply}</div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+            } catch (error) {
+                console.error('Error fetching response:', error);
+                chatBox.innerHTML += `
+                    <div class="message assistant error">Sorry, something went wrong. Please try again later.</div>
+                `;
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
     </script>
 </body>

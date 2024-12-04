@@ -12,27 +12,6 @@ load_dotenv()
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 
 app = Flask(__name__)
-
-# Function to clean the response from unwanted characters
-def clean_response(response: str) -> str:
-
-    response = re.sub(r'\\n', '\n', response)  # Replace escaped newlines with actual newlines
-    response = re.sub(r'\\', '', response)    # Remove backslashes
-    response = re.sub(r'\s+', ' ', response)  # Collapsing multiple spaces into one
-
-
-    response = re.sub(r'([.!?])\s+(?=[A-Z])', r'\1\n\n', response)  # Split sentences into separate paragraphs
-
-    response = re.sub(r'```', '\n```', response)  # Ensure triple backticks are on separate lines
-
-    
-    response = re.sub(r'(\d+)\.\s+', r'\1. ', response)  # Ensure numbered lists are formatted correctly
-    response = re.sub(r'(\*|[-+])\s+', r'\1 ', response)  # Fix bullet points formatting
-
-    response = re.sub(r'(\*\*.+?\*\*)', r'\1', response)  # Preserve bold formatting
-    response = re.sub(r'```(.*?)```', lambda m: '```' + m.group(1).strip() + '```', response, flags=re.DOTALL)
-
-    return response.strip()
 @app.route('/')
 def index():
     return render_template('index.html')  # Render the chatbot page
@@ -44,11 +23,7 @@ def ask():
         return jsonify({"error": "No question provided"}), 400
     
     response = get_most_similar_response(question)
-    
-    # Clean the response before returning it
-    cleaned_response = clean_response(response)
-    
-    return jsonify({"answer": cleaned_response})
+    return jsonify({"answer": response})
 
 @app.route('/test_gpt', methods=['POST'])
 def test_gpt():

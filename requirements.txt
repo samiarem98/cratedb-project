@@ -1,7 +1,7 @@
 python-dotenv==1.0.0
-langchain
-langchain-openai
-langchain-community
+langchain==0.3.8
+langchain-openai==0.2.10
+langchain-community==0.3.8
 pandas
 PyPDF2==3.0.0
 pypdf
@@ -10,5 +10,5 @@ crate==1.0.0
 Flask==2.0.3
 Werkzeug==2.0.3
 psycopg2-binary==2.9.3
-openai==1.42.0
+openai==1.55.3
 jupyter==1.0.0

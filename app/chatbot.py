@@ -7,34 +7,6 @@ import re
 # Initialize the OpenAI client with your API key
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])  # Make sure your OpenAI API key is set in the environment variables
 
-def clean_response(raw_response):
-    """
-    Cleans and formats the response for better readability.
-    """
-    # Trim excessive whitespace
-    clean_text = raw_response.strip()
-
-    # Format code blocks
-    clean_text = re.sub(r"```(.*?)```", r"```\1```", clean_text, flags=re.DOTALL)
-
-    # Add spacing for lists (bullet or numbered)
-    clean_text = re.sub(r"(?<=\n)(\d+\.\s)", r"\n\1", clean_text)  # Numbered lists
-    clean_text = re.sub(r"(?<=\n)([-*]\s)", r"\n\1", clean_text)   # Bullet lists
-
-    # Add line breaks around headings or emphasized sections
-    clean_text = re.sub(r"(?<=\n)(\*\*.*?\*\*)", r"\n\1\n", clean_text)
-
-    # Remove excessive newlines
-    clean_text = re.sub(r"\n\s*\n", "\n\n", clean_text)
-
-    # Optionally, handle table formatting or blockquotes
-    clean_text = clean_text.replace("|", " | ")  # For table formatting
-    clean_text = re.sub(r"(^>\s)", r"\n\1", clean_text, flags=re.MULTILINE)  # Blockquotes
-
-    return clean_text
-
-
-
 
 def get_most_similar_response(query):
     conn = get_crate_connection()
@@ -67,14 +39,19 @@ def get_most_similar_response(query):
       1. Use only the provided context to generate an answer. Do not use any external information or assumptions.
       2. Ensure your answer is concise, detailed, accurate, and directly addresses the user's query.
       3. Do not speculate or include additional details not explicitly supported by the provided context.
-      4. Format answers in plain text with clear and structured responses. Avoid unnecessary characters like excessive escape sequences.
-      5. If the user's query is vague, ambiguous, or too broad, respond by asking a clarifying question to narrow down their intent before providing an answer. Avoid attempting to answer until clarification is provided. For example:  
+      4. Provide the answer to the following question formatted as Markdown. Use paragraphs, bold for important points, and bullet points for lists if applicable.
+      5. Ensure proper line breaks and formatting in your response, particularly:
+         - Add a line break before and after the "Source" section for clarity.
+         - Maintain clear separation between paragraphs and lists.
+         - If a line starts with a "-" (indicating a bullet point), ensure it goes back in line.
+         - If you encounter a word in bold, ensure it starts on a new line for better readability and emphasis.
+      6. If the user's query is vague, ambiguous, or too broad, respond by asking a clarifying question to narrow down their intent before providing an answer. Avoid attempting to answer until clarification is provided. For example:  
          - Query: "How do I manage tables?"  
          - Follow-up: "Would you like to know about creating, modifying, or dropping tables?"
-      6. At the end of your response, always include the page number(s) and section number(s) from which the information was extracted. Use the format:  
+      7. At the end of your response, always include the page number(s) and section number(s) from which the information was extracted. Use the format:  
          "Source: Page [Page Number], Section [Section Number]"  
-      7. If the provided context does not contain relevant information, respond only with: "I don't know."
-      8. If the query is not about Databricks, respond with: "I don't know."
+      8. If the provided context does not contain relevant information, respond only with: "I don't know."
+      9. If the query is not about Databricks, respond with: "I don't know."
 
       ### Context:
       {context}
@@ -92,6 +69,6 @@ def get_most_similar_response(query):
         
         # Clean and return the assistant's response
         raw_response = response.choices[0].message.content
-        return clean_response(raw_response)
+        return raw_response
     except Exception as e:
         return f"Error generating response: {e}"
