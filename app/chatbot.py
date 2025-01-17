@@ -6,39 +6,6 @@ import os
 # Initialize the OpenAI client with your API key
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])  # Make sure your OpenAI API key is set in the environment variables
 
-import re
-
-import re
-
-def clean_response(raw_response):
-    """
-    Cleans and formats the response for better readability.
-    """
-    # Trim excessive whitespace
-    clean_text = raw_response.strip()
-
-    # Format code blocks
-    clean_text = re.sub(r"```(.*?)```", r"```\1```", clean_text, flags=re.DOTALL)
-
-    # Add spacing for lists (bullet or numbered)
-    clean_text = re.sub(r"(?<=\n)(\d+\.\s)", r"\n\1", clean_text)  # Numbered lists
-    clean_text = re.sub(r"(?<=\n)([-*]\s)", r"\n\1", clean_text)   # Bullet lists
-
-    # Add line breaks around headings or emphasized sections
-    clean_text = re.sub(r"(?<=\n)(\*\*.*?\*\*)", r"\n\1\n", clean_text)
-
-    # Remove excessive newlines
-    clean_text = re.sub(r"\n\s*\n", "\n\n", clean_text)
-
-    # Optionally, handle table formatting or blockquotes
-    clean_text = clean_text.replace("|", " | ")  # For table formatting
-    clean_text = re.sub(r"(^>\s)", r"\n\1", clean_text, flags=re.MULTILINE)  # Blockquotes
-
-    return clean_text
-
-
-
-
 def get_most_similar_response(query):
     conn = get_crate_connection()
     cursor = conn.cursor()
