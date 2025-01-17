@@ -14,7 +14,7 @@ services:
     entrypoint: /app/entrypoint.sh  # Run the entrypoint script
 
   cratedb:
-    image: crate
+    image: crate:5.9.6
     ports:
       - "4200:4200"
       - "5432:5432"

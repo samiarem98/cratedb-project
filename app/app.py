@@ -3,7 +3,6 @@ from .chatbot import get_most_similar_response
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-import re  # For regular expressions to clean up the response
 
 # Load environment variables from .env file
 load_dotenv()
@@ -43,10 +42,7 @@ def test_gpt():
         # Get the assistant's reply
         assistant_reply = response.choices[0].message.content
         
-        # Clean the assistant's reply before returning it
-        cleaned_reply = clean_response(assistant_reply)
-        
-        return jsonify({"answer": cleaned_reply})
+        return jsonify({"answer": assistant_reply})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
